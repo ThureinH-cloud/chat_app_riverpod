@@ -1,8 +1,11 @@
 import 'package:chat_application/common/routes/routes.dart';
 import 'package:chat_application/common/theme/theme_const.dart';
+import 'package:chat_application/di/locator.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupLocator();
   runApp(const MyApp());
 }
 
