@@ -50,7 +50,7 @@ class SplashScreen extends StatelessWidget {
                     ),
                     BrandButton(
                       onPressed: () {
-                        context.push('/login');
+                        context.push('/signup');
                       },
                       text: "Start Messaging",
                     )

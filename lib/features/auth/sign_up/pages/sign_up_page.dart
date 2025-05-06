@@ -188,12 +188,18 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                             text: "Continue",
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                ref.read(_provider.notifier).signUp(
-                                      name: _nameController.text,
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                    );
-                                context.push('');
+                                try {
+                                  ref.read(_provider.notifier).signUp(
+                                        name: _nameController.text,
+                                        email: _emailController.text,
+                                        password: _passwordController.text,
+                                      );
+                                  context.push(
+                                    '/otp',
+                                  );
+                                } catch (e) {
+                                  print(e);
+                                }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
