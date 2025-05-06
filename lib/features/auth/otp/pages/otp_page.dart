@@ -1,16 +1,23 @@
+import 'package:chat_application/common/theme/extension/color_brand.dart';
+import 'package:chat_application/common/widgets/brand_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class OtpPage extends ConsumerStatefulWidget {
-  const OtpPage({super.key});
-
+  const OtpPage({super.key, required this.email});
+  final String email;
   @override
   ConsumerState<OtpPage> createState() => _OtpPageState();
 }
 
 class _OtpPageState extends ConsumerState<OtpPage> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
   final List<TextEditingController> _controllers =
       List.generate(4, (_) => TextEditingController());
@@ -26,6 +33,7 @@ class _OtpPageState extends ConsumerState<OtpPage> {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = TextTheme.of(context);
+    ColorBrand colorBrand = Theme.of(context).extension<ColorBrand>()!;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -55,7 +63,7 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                   height: 8,
                 ),
                 Text(
-                  "We have sent you an OTP with the code to ",
+                  "We have sent you an OTP with the code to ${widget.email}",
                   style: textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -67,8 +75,10 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                      spacing: 12,
-                      children: List.generate(4, (index) {
+                    spacing: 12,
+                    children: List.generate(
+                      4,
+                      (index) {
                         return Expanded(
                           child: Container(
                             width: 50,
@@ -97,8 +107,32 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                             ),
                           ),
                         );
-                      })),
+                      },
+                    ),
+                  ),
                 ),
+                SizedBox(
+                  height: 8,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 24,
+                  ),
+                  child: BrandButton(
+                    text: "Verify",
+                    onPressed: () {},
+                  ),
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: Text(
+                    "Resend Code",
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorBrand.brandDefault,
+                    ),
+                  ),
+                )
               ],
             ),
           )

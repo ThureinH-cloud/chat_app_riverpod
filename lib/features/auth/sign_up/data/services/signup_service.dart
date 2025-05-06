@@ -10,8 +10,12 @@ class SignUpService {
     required String email,
     required String password,
   }) async {
-    final res = await _dio.post(UrlConst.signup,
-        data: {"name": name, "email": email, "password": password});
+    final res = await _dio.post(UrlConst.signup, data: {
+      "name": name,
+      "email": email,
+      "password": password,
+    });
+
     return SignUp.fromJson(res.data);
   }
 }

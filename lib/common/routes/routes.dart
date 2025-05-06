@@ -27,7 +27,10 @@ final router = GoRouter(
     GoRoute(
       path: '/otp',
       builder: (context, state) {
-        return OtpPage();
+        final email = state.extra as String;
+        return OtpPage(
+          email: email,
+        );
       },
     ),
   ],
