@@ -1,5 +1,6 @@
 import 'package:chat_application/common/theme/extension/color_brand.dart';
 import 'package:chat_application/common/widgets/brand_button.dart';
+import 'package:chat_application/features/auth/otp/notifier/otp_state_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,11 @@ class OtpPage extends ConsumerStatefulWidget {
 }
 
 class _OtpPageState extends ConsumerState<OtpPage> {
+  final OTPStateProvider _otpStateProvider = OTPStateProvider(
+    () {
+      return OtpStateNotifier();
+    },
+  );
   @override
   void initState() {
     // TODO: implement initState
@@ -19,8 +25,10 @@ class _OtpPageState extends ConsumerState<OtpPage> {
   }
 
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
-  final List<TextEditingController> _controllers =
-      List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
   void _onChanged(String value, int index) {
     if (value.length == 1 && index < _focusNodes.length - 1) {
       _focusNodes[index + 1].requestFocus();
@@ -121,7 +129,16 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                   ),
                   child: BrandButton(
                     text: "Verify",
-                    onPressed: () {},
+                    onPressed: () async {
+                      String otp = "";
+                      for (int i = 0; i < _controllers.length; i++) {
+                        otp += _controllers[i].text;
+                      }
+                      ref.read(_otpStateProvider.notifier).otpVerify(
+                            email: widget.email,
+                            otp: otp,
+                          );
+                    },
                   ),
                 ),
                 InkWell(
