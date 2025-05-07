@@ -5,19 +5,18 @@ class LoginStateModel {
   final bool isFailed;
   final bool isSuccess;
   final Login? login;
-
   LoginStateModel({
     this.isLoading = false,
     this.isFailed = false,
     this.isSuccess = false,
     this.login,
   });
-  LoginStateModel copyWith({
-    bool? isLoading,
-    bool? isFailed,
-    bool? isSuccess,
-    Login? login,
-  }) {
+  LoginStateModel copyWith(
+      {bool? isLoading,
+      bool? isFailed,
+      bool? isSuccess,
+      Login? login,
+      Error? loginError}) {
     return LoginStateModel(
       isLoading: isLoading ?? this.isLoading,
       isFailed: isFailed ?? this.isFailed,

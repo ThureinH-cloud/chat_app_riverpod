@@ -10,10 +10,17 @@ class LoginService {
     required String email,
     required String password,
   }) async {
-    final res = await _dio.post(UrlConst.login, data: {
-      'email': email,
-      'password': password,
-    });
-    return Login.fromJson(res.data);
+    try {
+      final res = await _dio.post(UrlConst.login, data: {
+        'email': email,
+        'password': password,
+      });
+      return Login.fromJson(res.data);
+    } catch (e) {
+      if (e is DioException) {
+        throw Login.fromJson(e.response?.data);
+      }
+      throw e.toString();
+    }
   }
 }

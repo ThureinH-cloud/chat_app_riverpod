@@ -22,7 +22,10 @@ class SignUpStateNotifier extends Notifier<SignUpStateModel> {
     try {
       state = state.copyWith(isLoading: true);
       SignUp signUp = await _signUpService.signup(
-          name: name, email: email, password: password);
+        name: name,
+        email: email,
+        password: password,
+      );
       state = state.copyWith(isLoading: false, signUp: signUp);
     } catch (e) {
       print(e.toString());
