@@ -1,5 +1,6 @@
 import 'package:chat_application/common/theme/extension/color_brand.dart';
 import 'package:chat_application/common/widgets/brand_button.dart';
+import 'package:chat_application/features/auth/otp/notifier/otp_state_model.dart';
 import 'package:chat_application/features/auth/otp/notifier/otp_state_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +43,7 @@ class _OtpPageState extends ConsumerState<OtpPage> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = TextTheme.of(context);
     ColorBrand colorBrand = Theme.of(context).extension<ColorBrand>()!;
+    OtpStateModel state = ref.watch(_otpStateProvider);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -52,107 +54,115 @@ class _OtpPageState extends ConsumerState<OtpPage> {
         ),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 65,
-                ),
-                Text(
-                  "Enter Code",
-                  style: textTheme.displayMedium?.copyWith(
-                    color: colorScheme.onSurface,
+          if (state.isLoading)
+            Center(
+              child: CircularProgressIndicator.adaptive(),
+            ),
+          if (state.isLoading == false)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 65,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  "We have sent you an OTP with the code to ${widget.email}",
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface,
+                  Text(
+                    "Enter Code",
+                    style: textTheme.displayMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  height: 32,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    spacing: 12,
-                    children: List.generate(
-                      4,
-                      (index) {
-                        return Expanded(
-                          child: Container(
-                            width: 50,
-                            margin: EdgeInsets.symmetric(horizontal: 8),
-                            child: TextField(
-                              controller: _controllers[index],
-                              focusNode: _focusNodes[index],
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              maxLength: 1,
-                              decoration: InputDecoration(
-                                counterText: "",
-                                fillColor: colorScheme.surfaceContainerHighest,
-                                filled: true,
-                                border:
-                                    MaterialStateOutlineInputBorder.resolveWith(
-                                  (_) {
-                                    return OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                      borderSide: BorderSide.none,
-                                    );
-                                  },
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    "We have sent you an OTP with the code to ${widget.email}",
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      spacing: 12,
+                      children: List.generate(
+                        4,
+                        (index) {
+                          return Expanded(
+                            child: Container(
+                              width: 50,
+                              margin: EdgeInsets.symmetric(horizontal: 8),
+                              child: TextField(
+                                controller: _controllers[index],
+                                focusNode: _focusNodes[index],
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                maxLength: 1,
+                                decoration: InputDecoration(
+                                  counterText: "",
+                                  fillColor:
+                                      colorScheme.surfaceContainerHighest,
+                                  filled: true,
+                                  border: MaterialStateOutlineInputBorder
+                                      .resolveWith(
+                                    (_) {
+                                      return OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: BorderSide.none,
+                                      );
+                                    },
+                                  ),
                                 ),
+                                onChanged: (value) => _onChanged(value, index),
                               ),
-                              onChanged: (value) => _onChanged(value, index),
                             ),
-                          ),
-                        );
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 24,
+                    ),
+                    child: BrandButton(
+                      text: "Verify",
+                      onPressed: () async {
+                        String otp = "";
+                        for (int i = 0; i < _controllers.length; i++) {
+                          otp += _controllers[i].text;
+                        }
+                        ref.read(_otpStateProvider.notifier).otpVerify(
+                              email: widget.email,
+                              otp: otp,
+                            );
+                        context.push("/login");
                       },
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
-                  ),
-                  child: BrandButton(
-                    text: "Verify",
-                    onPressed: () async {
-                      String otp = "";
-                      for (int i = 0; i < _controllers.length; i++) {
-                        otp += _controllers[i].text;
-                      }
-                      ref.read(_otpStateProvider.notifier).otpVerify(
-                            email: widget.email,
-                            otp: otp,
-                          );
-                    },
-                  ),
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: Text(
-                    "Resend Code",
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorBrand.brandDefault,
+                  InkWell(
+                    onTap: () {},
+                    child: Text(
+                      "Resend Code",
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorBrand.brandDefault,
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          )
+                  )
+                ],
+              ),
+            )
         ],
       ),
     );
