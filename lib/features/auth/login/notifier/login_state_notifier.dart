@@ -31,14 +31,12 @@ class LoginStateNotifier extends Notifier<LoginStateModel> {
       return true;
     } catch (e) {
       if (e is Login) {
-        // Caught a Login error response from Dio
         state = state.copyWith(
           isLoading: false,
           login: e,
           isFailed: true,
         );
       } else {
-        // Caught a string or unknown error
         state = state.copyWith(
           isLoading: false,
           isFailed: true,
@@ -49,7 +47,6 @@ class LoginStateNotifier extends Notifier<LoginStateModel> {
           ),
         );
       }
-
       return false;
     }
   }

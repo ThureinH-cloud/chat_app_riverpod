@@ -50,7 +50,7 @@ class ThemeConst {
         ),
         extensions: [
           ColorBrand(
-            brandDefault: Color(0xff375FFF),
+            brandDefault: Color(0xff002DE3),
             brandBackground: Color(0xffD2D5F9),
           ),
           ColorNeutral(

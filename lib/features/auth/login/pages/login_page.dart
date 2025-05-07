@@ -22,6 +22,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       return LoginStateNotifier();
     },
   );
+
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;

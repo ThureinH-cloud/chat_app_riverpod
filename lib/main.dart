@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeConst.lightTheme(),
       darkTheme: ThemeConst.darkTheme(),
+      themeMode: ThemeMode.dark,
       routerConfig: router,
     );
   }
