@@ -18,7 +18,8 @@ class OtpStateNotifier extends Notifier<OtpStateModel> {
     required String otp,
   }) async {
     try {
-      state = state.copyWith(isLoading: true);
+      state =
+          state.copyWith(isLoading: true, isSuccess: false, isFailed: false);
       final Otp model = await _otpService.emailVerify(email: email, otp: otp);
       state = state.copyWith(isLoading: false, otp: model, isSuccess: true);
     } catch (e) {

@@ -1,8 +1,7 @@
 import 'package:chat_application/features/auth/login/data/service/login_service.dart';
 import 'package:chat_application/features/auth/login/notifier/login_state_model.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../data/model/Login.dart';
 
 typedef LoginStateProvider
     = NotifierProvider<LoginStateNotifier, LoginStateModel>;
@@ -15,7 +14,7 @@ class LoginStateNotifier extends Notifier<LoginStateModel> {
     return LoginStateModel();
   }
 
-  Future<bool> userLogin({
+  Future<void> userLogin({
     required String email,
     required String password,
   }) async {
@@ -24,30 +23,27 @@ class LoginStateNotifier extends Notifier<LoginStateModel> {
     try {
       final model = await _loginService.login(email: email, password: password);
       state = state.copyWith(
-        isLoading: false,
-        login: model,
-        isFailed: false,
-      );
-      return true;
+          isLoading: false, login: model, isFailed: false, isSuccess: true);
     } catch (e) {
-      if (e is Login) {
-        state = state.copyWith(
-          isLoading: false,
-          login: e,
-          isFailed: true,
-        );
+      if (e is DioException) {
+        final errorResponse = e.response?.data;
+        if (errorResponse is Map && errorResponse['message'] != null) {
+          state = state.copyWith(
+            isLoading: false,
+            isFailed: true,
+            errorMessage: errorResponse['message'],
+          );
+        } else {
+          state = state.copyWith(
+            isLoading: false,
+            isFailed: true,
+            errorMessage: 'Unknown error',
+          );
+        }
       } else {
         state = state.copyWith(
-          isLoading: false,
-          isFailed: true,
-          login: Login(
-            status: false,
-            message: e.toString(),
-            data: null,
-          ),
-        );
+            isLoading: false, isFailed: true, errorMessage: "Server Error");
       }
-      return false;
     }
   }
 }
