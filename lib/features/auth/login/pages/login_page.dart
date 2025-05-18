@@ -27,20 +27,74 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     TextTheme textTheme = Theme.of(context).textTheme;
     ColorBrand colorBrand = Theme.of(context).extension<ColorBrand>()!;
     LoginStateModel state = ref.watch(_loginStateProvider);
-    ref.listen(_loginStateProvider, (previous, next) {
+    ref.listen(_loginStateProvider, (previous, next) async {
+      print("${previous?.isFailed} ${next.isFailed}");
       if (next.isSuccess == true) {
-        context.go('/home');
+        showDialog(
+          context: context,
+          barrierDismissible: false, // prevent dismiss before timeout
+          builder: (context) {
+            return AlertDialog.adaptive(
+              content: Column(
+                spacing: 4,
+                children: [
+                  Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.green,
+                    size: 50,
+                  ),
+                  Text(
+                    next.login?.message ?? "",
+                    style: textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "You will be redirected shortly.",
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        );
+        await Future.delayed(
+          Duration(
+            seconds: 3,
+          ),
+        );
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+        if (context.mounted) {
+          context.go('/home');
+        }
       } else if (next.isFailed == true && previous?.isFailed != true) {
         showDialog(
           context: context,
           builder: (child) {
             return AlertDialog.adaptive(
-              title: Text("Error"),
-              content: Text(
-                next.errorMessage ?? "",
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurface,
-                ),
+              content: Column(
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                  ),
+                  Text(
+                    "Error",
+                    style: textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    next.errorMessage ?? "",
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                ],
               ),
               actions: [
                 TextButton(

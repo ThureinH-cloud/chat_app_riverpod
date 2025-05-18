@@ -20,7 +20,7 @@ class SignUpStateNotifier extends Notifier<SignUpStateModel> {
     required String email,
     required String password,
   }) async {
-    state = state.copyWith(isLoading: true, isSuccess: false);
+    state = state.copyWith(isLoading: true, isSuccess: false, isFailed: false);
 
     try {
       SignUp signUp = await _signUpService.signup(

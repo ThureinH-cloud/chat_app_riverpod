@@ -31,7 +31,29 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     SignUpStateModel stateModel = ref.watch(_provider);
     ref.listen(_provider, (previous, next) {
       if (next.isSuccess == true) {
-        context.go("/otp");
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (child) {
+            return AlertDialog.adaptive(
+              title: Text("Success"),
+              content: Text(
+                next.signUp?.message ?? "",
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    context.go("/otp", extra: _email);
+                  },
+                  child: Text("OK"),
+                )
+              ],
+            );
+          },
+        );
       } else if (next.isFailed == true && previous?.isFailed != true) {
         showDialog(
           context: context,

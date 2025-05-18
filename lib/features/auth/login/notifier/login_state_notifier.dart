@@ -18,7 +18,7 @@ class LoginStateNotifier extends Notifier<LoginStateModel> {
     required String email,
     required String password,
   }) async {
-    state = state.copyWith(isLoading: true, isSuccess: false);
+    state = state.copyWith(isLoading: true, isSuccess: false, isFailed: false);
 
     try {
       final model = await _loginService.login(email: email, password: password);
