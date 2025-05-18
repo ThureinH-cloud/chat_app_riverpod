@@ -14,13 +14,11 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
-  final LoginStateProvider _loginStateProvider = LoginStateProvider(
-    () {
-      return LoginStateNotifier();
-    },
+  String? _email;
+  String? _password;
+  final _loginStateProvider = LoginStateProvider(
+    () => LoginStateNotifier(),
   );
 
   @override
@@ -29,6 +27,34 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     TextTheme textTheme = Theme.of(context).textTheme;
     ColorBrand colorBrand = Theme.of(context).extension<ColorBrand>()!;
     LoginStateModel state = ref.watch(_loginStateProvider);
+    ref.listen(_loginStateProvider, (previous, next) {
+      if (next.isSuccess == true) {
+        context.go('/home');
+      } else if (next.isFailed == true && previous?.isFailed != true) {
+        showDialog(
+          context: context,
+          builder: (child) {
+            return AlertDialog.adaptive(
+              title: Text("Error"),
+              content: Text(
+                next.errorMessage ?? "",
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: Text("OK"),
+                )
+              ],
+            );
+          },
+        );
+      }
+    });
     return !state.isLoading
         ? Scaffold(
             appBar: AppBar(
@@ -58,7 +84,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           children: [
                             Spacer(),
                             TextFormField(
-                              controller: _emailController,
+                              onSaved: (newValue) {
+                                _email = newValue;
+                              },
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
                                   return "Please enter your email";
@@ -94,7 +122,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               height: 8,
                             ),
                             TextFormField(
-                              controller: _passwordController,
+                              onSaved: (newValue) {
+                                _password = newValue;
+                              },
                               style: textTheme.bodyLarge?.copyWith(
                                 color: colorScheme.onSurface,
                               ),
@@ -122,6 +152,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   },
                                 ),
                               ),
+                              obscureText: true,
                             ),
                             SizedBox(
                               height: 8,
@@ -129,25 +160,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             BrandButton(
                               text: "Login",
                               onPressed: () async {
-                                if (_formkey.currentState!.validate()) {
+                                FormState formState = _formkey.currentState!;
+                                formState.save();
+                                if (formState.validate()) {
                                   await ref
                                       .read(_loginStateProvider.notifier)
                                       .userLogin(
-                                        email: _emailController.text,
-                                        password: _passwordController.text,
+                                        email: _email!,
+                                        password: _password!,
                                       );
-                                  if (state.isSuccess == true) {
-                                    context.go("/home");
-                                  } else {
-                                    final errorMessage = ref
-                                            .read(_loginStateProvider)
-                                            .login
-                                            ?.message ??
-                                        'Login failed';
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(errorMessage)),
-                                    );
-                                  }
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(

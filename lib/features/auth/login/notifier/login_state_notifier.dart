@@ -18,12 +18,16 @@ class LoginStateNotifier extends Notifier<LoginStateModel> {
     required String email,
     required String password,
   }) async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, isSuccess: false);
 
     try {
       final model = await _loginService.login(email: email, password: password);
       state = state.copyWith(
-          isLoading: false, login: model, isFailed: false, isSuccess: true);
+        isLoading: false,
+        login: model,
+        isFailed: false,
+        isSuccess: true,
+      );
     } catch (e) {
       if (e is DioException) {
         final errorResponse = e.response?.data;
@@ -32,17 +36,23 @@ class LoginStateNotifier extends Notifier<LoginStateModel> {
             isLoading: false,
             isFailed: true,
             errorMessage: errorResponse['message'],
+            isSuccess: false,
           );
         } else {
           state = state.copyWith(
             isLoading: false,
             isFailed: true,
             errorMessage: 'Unknown error',
+            isSuccess: false,
           );
         }
       } else {
         state = state.copyWith(
-            isLoading: false, isFailed: true, errorMessage: "Server Error");
+          isLoading: false,
+          isFailed: true,
+          errorMessage: "Server Error",
+          isSuccess: false,
+        );
       }
     }
   }

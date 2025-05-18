@@ -29,6 +29,34 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
     SignUpStateModel stateModel = ref.watch(_provider);
+    ref.listen(_provider, (previous, next) {
+      if (next.isSuccess == true) {
+        context.go("/otp");
+      } else if (next.isFailed == true && previous?.isFailed != true) {
+        showDialog(
+          context: context,
+          builder: (child) {
+            return AlertDialog.adaptive(
+              title: Text("Error"),
+              content: Text(
+                next.errorMessage ?? "",
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: Text("OK"),
+                )
+              ],
+            );
+          },
+        );
+      }
+    });
     return !stateModel.isLoading
         ? Scaffold(
             appBar: AppBar(
@@ -192,9 +220,10 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                         .resolveWith(
                                       (_) {
                                         return OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            borderSide: BorderSide.none);
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          borderSide: BorderSide.none,
+                                        );
                                       },
                                     ),
                                   ),
@@ -213,25 +242,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                             email: _email!,
                                             password: _password!,
                                           );
-                                      if (stateModel.isSuccess == true) {
-                                        Future.delayed(
-                                          Duration(seconds: 2),
-                                          () => {
-                                            if (context.mounted)
-                                              {
-                                                context.push("otp"),
-                                              }
-                                          },
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content:
-                                                Text(stateModel.errorMessage!),
-                                          ),
-                                        );
-                                      }
                                     } else {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -279,7 +289,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
           )
         : Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator.adaptive(),
             ),
           );
   }
