@@ -69,7 +69,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           Navigator.of(context).pop();
         }
         if (context.mounted) {
-          context.go('/home');
+          context.go("/contact");
         }
       } else if (next.isFailed == true && previous?.isFailed != true) {
         showDialog(

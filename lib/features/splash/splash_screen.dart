@@ -1,15 +1,23 @@
-import 'package:chat_application/common/theme/extension/color_brand.dart';
+import 'package:chat_application/common/storage/app_storage.dart';
 import 'package:chat_application/common/widgets/brand_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  final AppStorage _appStorage = GetIt.I.get<AppStorage>();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = TextTheme.of(context);
     ColorScheme colorScheme = Theme.of(context).colorScheme;
-    ColorBrand colorBrand = Theme.of(context).extension<ColorBrand>()!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -50,7 +58,12 @@ class SplashScreen extends StatelessWidget {
                     ),
                     BrandButton(
                       onPressed: () {
-                        context.push('/signup');
+                        String token = _appStorage.getToken();
+                        if (token.isEmpty) {
+                          context.push('/login');
+                        } else {
+                          context.go("/contact");
+                        }
                       },
                       text: "Start Messaging",
                     )

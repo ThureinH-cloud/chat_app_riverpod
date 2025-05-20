@@ -13,7 +13,6 @@ class ThemeConst {
           selectionColor: Colors.lightBlue.shade100, // Highlighted background
           selectionHandleColor: Colors.blueAccent,
         ),
-        scaffoldBackgroundColor: Color(0xffFFFFFF),
         textTheme: light.textTheme
             .copyWith(displayMedium: displayMedium, bodyMedium: bodyMedium),
         colorScheme: light.colorScheme.copyWith(
