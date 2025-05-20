@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
-  final StatefulNavigationShell shell;
-
   const HomePage({super.key, required this.shell});
+  final StatefulNavigationShell shell;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -23,10 +22,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(),
       body: shell,
       bottomNavigationBar: NavigationBar(
-        elevation: 1,
+        elevation: 2,
         height: 48,
         backgroundColor: colorScheme.surface,
         selectedIndex: shell.currentIndex,
+        shadowColor: Colors.grey,
         destinations: [
           InkWell(
             onTap: () {
@@ -49,15 +49,24 @@ class _HomePageState extends State<HomePage> {
                             Icons.circle,
                             size: 8,
                             color: colorBrand.brandDefault,
-                          )
+                          ),
                         ],
                       ),
                     ),
                   if (selectedIndex != 0)
-                    Icon(
-                      Icons.people,
-                      color: colorScheme.onSurface,
-                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Icon(
+                            Icons.people,
+                            color: colorScheme.onSurface,
+                          ),
+                        ],
+                      ),
+                    )
                 ],
               ),
             ),
@@ -88,10 +97,19 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   if (selectedIndex != 1)
-                    Icon(
-                      Icons.chat_bubble_outline_outlined,
-                      color: colorScheme.onSurface,
-                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Icon(
+                            Icons.chat_bubble_outline_outlined,
+                            color: colorScheme.onSurface,
+                          ),
+                        ],
+                      ),
+                    )
                 ],
               ),
             ),
@@ -121,7 +139,17 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                  if (selectedIndex != 2) Icon(Icons.more_horiz),
+                  if (selectedIndex != 2)
+                    Expanded(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Icon(Icons.more_horiz),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),

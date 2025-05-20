@@ -3,4 +3,5 @@ class UrlConst {
   static const String signup = "user/register";
   static const String verfiyOtp = "user/email-verify";
   static const String login = "user/login";
+  static const String search = "user/?search";
 }

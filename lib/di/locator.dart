@@ -11,7 +11,17 @@ Future<void> setupLocator() async {
   dio.options.baseUrl = UrlConst.baseUrl;
   dio.interceptors.add(PrettyDioLogger());
   getIt.registerSingleton(dio);
-
+  Dio auth = Dio();
+  auth.options.baseUrl = UrlConst.baseUrl;
+  auth.interceptors.add(PrettyDioLogger());
+  auth.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) {
+      options.headers['Authorization'] =
+          'Bearer ${getIt<AppStorage>().getToken()}';
+      return handler.next(options);
+    },
+  ));
+  getIt.registerSingleton(auth, instanceName: "auth");
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(sharedPreferences);
 
