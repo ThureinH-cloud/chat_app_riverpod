@@ -7,6 +7,7 @@ import 'package:chat_application/features/home/contacts/notifier/contact_notifie
 import 'package:chat_application/features/home/contacts/notifier/contact_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class ContactPage extends ConsumerStatefulWidget {
   const ContactPage({super.key});
@@ -49,8 +50,9 @@ class _ContactPageState extends ConsumerState<ContactPage> {
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(18.0),
+              Container(
+                padding: const EdgeInsets.only(
+                    left: 18, right: 18, top: 18, bottom: 2),
                 child: TextField(
                   controller: _search,
                   focusNode: _focusNode,
@@ -87,59 +89,65 @@ class _ContactPageState extends ConsumerState<ContactPage> {
               if (state.isLoading == false && state.isFailed == false)
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Column(
-                      spacing: 6,
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: contacts?.length,
-                            itemBuilder: (context, index) {
-                              Data contact = contacts![index];
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                ),
-                                // child: ListTile(
-                                //   title: Text(
-                                //     contact.name ?? "",
-                                //     style: textTheme.bodyLarge,
-                                //   ),
-                                //   subtitle: Text(
-                                //     contact.email ?? "",
-                                //     style: textTheme.bodyMedium?.copyWith(
-                                //       color: colorScheme.onSurfaceVariant,
-                                //     ),
-                                //   ),
-                                // ),
-                                child: Column(
-                                  spacing: 2,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      contact.name ?? "",
-                                      style: textTheme.bodyMedium?.copyWith(
-                                          color: colorScheme.onSurface),
-                                    ),
-                                    Text(
-                                      contact.email ?? "",
-                                      style: metaTheme.metaData1.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 12,
+                    ),
+                    child: AnimationLimiter(
+                      child: ListView.builder(
+                        itemCount: contacts?.length,
+                        itemBuilder: (context, index) {
+                          Data contact = contacts![index];
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 375),
+                            child: FlipAnimation(
+                              delay: Duration(milliseconds: 500),
+                              child: Column(
+                                spacing: 2,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      print(contact.id);
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(8),
+                                      width: double.infinity,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            contact.name ?? "",
+                                            style: textTheme.bodyMedium
+                                                ?.copyWith(
+                                                    color:
+                                                        colorScheme.onSurface),
+                                          ),
+                                          Text(
+                                            contact.email ?? "",
+                                            style: metaTheme.metaData1.copyWith(
+                                              color:
+                                                  colorScheme.onSurfaceVariant,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 2,
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 2,
-                                    ),
-                                    Divider(
-                                      color: colorNeutral.neutralLine,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+                                  ),
+                                  Divider(
+                                    color: colorNeutral.neutralLine,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),

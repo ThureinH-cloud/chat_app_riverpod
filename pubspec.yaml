@@ -40,6 +40,7 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   flutter_riverpod: ^2.6.1
   shared_preferences: ^2.5.3
+  flutter_staggered_animations: ^1.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

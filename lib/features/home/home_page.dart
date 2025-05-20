@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
           // IconButton(onPressed: (){
 
           // }, icon: icon)
-          if (_titleList.indexOf("Contacts") == 0)
+          if (_titleList[shell.currentIndex] == "Contacts")
             IconButton(
               onPressed: () {},
               icon: Icon(

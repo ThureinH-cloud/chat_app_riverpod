@@ -1,8 +1,9 @@
 class CreateChat {
   CreateChat({
-      this.status, 
-      this.message, 
-      this.data,});
+    this.status,
+    this.message,
+    this.data,
+  });
 
   CreateChat.fromJson(dynamic json) {
     status = json['status'];
@@ -12,13 +13,16 @@ class CreateChat {
   bool? status;
   String? message;
   Data? data;
-CreateChat copyWith({  bool? status,
-  String? message,
-  Data? data,
-}) => CreateChat(  status: status ?? this.status,
-  message: message ?? this.message,
-  data: data ?? this.data,
-);
+  CreateChat copyWith({
+    bool? status,
+    String? message,
+    Data? data,
+  }) =>
+      CreateChat(
+        status: status ?? this.status,
+        message: message ?? this.message,
+        data: data ?? this.data,
+      );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['status'] = status;
@@ -28,19 +32,19 @@ CreateChat copyWith({  bool? status,
     }
     return map;
   }
-
 }
 
 class Data {
   Data({
-      this.id, 
-      this.users, 
-      this.latestMessage, 
-      this.groupName, 
-      this.isGroupChat, 
-      this.createdAt,
-      this.updatedAt, 
-      this.v,});
+    this.id,
+    this.users,
+    this.latestMessage,
+    this.groupName,
+    this.isGroupChat,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+  });
 
   Data.fromJson(dynamic json) {
     id = json['_id'];
@@ -66,23 +70,26 @@ class Data {
   String? createdAt;
   String? updatedAt;
   num? v;
-Data copyWith({  String? id,
-  List<Users>? users,
-  dynamic latestMessage,
-  dynamic groupName,
-  bool? isGroupChat,
-  String? createdAt,
-  String? updatedAt,
-  num? v,
-}) => Data(  id: id ?? this.id,
-  users: users ?? this.users,
-  latestMessage: latestMessage ?? this.latestMessage,
-  groupName: groupName ?? this.groupName,
-  isGroupChat: isGroupChat ?? this.isGroupChat,
-  createdAt: createdAt ?? this.createdAt,
-  updatedAt: updatedAt ?? this.updatedAt,
-  v: v ?? this.v,
-);
+  Data copyWith({
+    String? id,
+    List<Users>? users,
+    dynamic latestMessage,
+    dynamic groupName,
+    bool? isGroupChat,
+    String? createdAt,
+    String? updatedAt,
+    num? v,
+  }) =>
+      Data(
+        id: id ?? this.id,
+        users: users ?? this.users,
+        latestMessage: latestMessage ?? this.latestMessage,
+        groupName: groupName ?? this.groupName,
+        isGroupChat: isGroupChat ?? this.isGroupChat,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        v: v ?? this.v,
+      );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['_id'] = id;
@@ -98,20 +105,20 @@ Data copyWith({  String? id,
     map['__v'] = v;
     return map;
   }
-
 }
 
 class Users {
   Users({
-      this.id, 
-      this.name, 
-      this.cover, 
-      this.email, 
-      this.isVerified, 
-      this.isBanned, 
-      this.createdAt, 
-      this.updatedAt, 
-      this.v,});
+    this.id,
+    this.name,
+    this.cover,
+    this.email,
+    this.isVerified,
+    this.isBanned,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+  });
 
   Users.fromJson(dynamic json) {
     id = json['_id'];
@@ -133,25 +140,28 @@ class Users {
   String? createdAt;
   String? updatedAt;
   num? v;
-Users copyWith({  String? id,
-  String? name,
-  dynamic cover,
-  String? email,
-  bool? isVerified,
-  bool? isBanned,
-  String? createdAt,
-  String? updatedAt,
-  num? v,
-}) => Users(  id: id ?? this.id,
-  name: name ?? this.name,
-  cover: cover ?? this.cover,
-  email: email ?? this.email,
-  isVerified: isVerified ?? this.isVerified,
-  isBanned: isBanned ?? this.isBanned,
-  createdAt: createdAt ?? this.createdAt,
-  updatedAt: updatedAt ?? this.updatedAt,
-  v: v ?? this.v,
-);
+  Users copyWith({
+    String? id,
+    String? name,
+    dynamic cover,
+    String? email,
+    bool? isVerified,
+    bool? isBanned,
+    String? createdAt,
+    String? updatedAt,
+    num? v,
+  }) =>
+      Users(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        cover: cover ?? this.cover,
+        email: email ?? this.email,
+        isVerified: isVerified ?? this.isVerified,
+        isBanned: isBanned ?? this.isBanned,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        v: v ?? this.v,
+      );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['_id'] = id;
@@ -165,5 +175,4 @@ Users copyWith({  String? id,
     map['__v'] = v;
     return map;
   }
-
 }

@@ -1,4 +1,5 @@
 import 'package:chat_application/features/home/contacts/data/model/contact.dart';
+import 'package:chat_application/features/home/contacts/data/model/create_chat.dart';
 import 'package:chat_application/features/home/contacts/data/services/contact_services.dart';
 import 'package:chat_application/features/home/contacts/notifier/contact_state.dart';
 import 'package:dio/dio.dart';
@@ -35,6 +36,16 @@ class ContactNotifier extends Notifier<ContactState> {
           errorMessage: 'Something wrong',
         );
       }
+    }
+  }
+
+  Future<CreateChat> createChat({required String userId}) async {
+    try {
+      CreateChat createChatModel =
+          await _contactServices.createChat(receiverId: userId);
+      return createChatModel;
+    } catch (e) {
+      return Future.error(e);
     }
   }
 }
