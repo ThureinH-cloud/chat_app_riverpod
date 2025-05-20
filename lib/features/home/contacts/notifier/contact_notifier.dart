@@ -14,14 +14,27 @@ class ContactNotifier extends Notifier<ContactState> {
     return ContactState();
   }
 
-  Future<void> searchContacts() async {
-    state = state.copyWith(isLoading: true, isFailed: false, isSuccess: false);
+  void searchContacts({String? search}) async {
     try {
-      Contact model = await _contactServices.getContacts();
+      state =
+          state.copyWith(isLoading: true, isFailed: false, isSuccess: false);
+
+      Contact model = await _contactServices.getContacts(search: search ?? "");
       state = state.copyWith(
           isLoading: false, isFailed: false, isSuccess: true, contact: model);
     } catch (e) {
-      if (e is DioException) {}
+      if (e is DioException && e.response?.data['message'] != null) {
+        state = state.copyWith(
+            isLoading: false,
+            isFailed: true,
+            errorMessage: e.response?.data['message']);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          isFailed: true,
+          errorMessage: 'Something wrong',
+        );
+      }
     }
   }
 }

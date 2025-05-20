@@ -11,6 +11,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final List<String> _titleList = ['Contacts', 'Chats', "Settings"];
+
   @override
   Widget build(BuildContext context) {
     StatefulNavigationShell shell = widget.shell;
@@ -19,7 +21,25 @@ class _HomePageState extends State<HomePage> {
     ColorBrand colorBrand = Theme.of(context).extension<ColorBrand>()!;
     TextTheme textTheme = TextTheme.of(context);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(
+          _titleList[shell.currentIndex],
+        ),
+        centerTitle: false,
+        actions: [
+          // IconButton(onPressed: (){
+
+          // }, icon: icon)
+          if (_titleList.indexOf("Contacts") == 0)
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.add,
+                color: colorScheme.onSurface,
+              ),
+            )
+        ],
+      ),
       body: shell,
       bottomNavigationBar: NavigationBar(
         elevation: 2,
