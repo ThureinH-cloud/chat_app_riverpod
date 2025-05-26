@@ -1,6 +1,7 @@
 import 'package:chat_application/features/auth/login/pages/login_page.dart';
 import 'package:chat_application/features/auth/otp/pages/otp_page.dart';
 import 'package:chat_application/features/auth/sign_up/pages/sign_up_page.dart';
+import 'package:chat_application/features/home/chat_details/page/chat_details.dart';
 import 'package:chat_application/features/home/chat_list/page/chat_list_page.dart';
 import 'package:chat_application/features/home/contacts/page/contact_page.dart';
 import 'package:chat_application/features/home/home_page.dart';
@@ -79,5 +80,12 @@ final router = GoRouter(
         );
       },
     ),
+    GoRoute(
+      name: "chat-details",
+      path: "/chat-details",
+      builder: (context, state) {
+        return ChatDetailsPage();
+      },
+    )
   ],
 );

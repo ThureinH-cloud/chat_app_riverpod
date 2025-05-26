@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:chat_application/common/theme/extension/color_neutral.dart';
 import 'package:chat_application/common/theme/extension/meta_data_text_theme.dart';
 import 'package:chat_application/features/home/contacts/data/model/contact.dart';
+import 'package:chat_application/features/home/contacts/data/model/create_chat.dart'
+    hide Data;
 import 'package:chat_application/features/home/contacts/notifier/contact_notifier.dart';
 import 'package:chat_application/features/home/contacts/notifier/contact_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:go_router/go_router.dart';
 
 class ContactPage extends ConsumerStatefulWidget {
   const ContactPage({super.key});
@@ -45,7 +48,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
         Theme.of(context).extension<ColorNeutral>()!;
     ContactState state = ref.watch(_provider);
     ContactNotifier notifier = ref.read(_provider.notifier);
-    List<Data>? contacts = state.contact?.data;
+    Contact? contactModel = state.contact;
     return state.isLoading == false
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -95,9 +98,9 @@ class _ContactPageState extends ConsumerState<ContactPage> {
                     ),
                     child: AnimationLimiter(
                       child: ListView.builder(
-                        itemCount: contacts?.length,
+                        itemCount: contactModel?.data?.length ?? 0,
                         itemBuilder: (context, index) {
-                          Data contact = contacts![index];
+                          Data? contact = contactModel?.data?[index];
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             duration: const Duration(milliseconds: 375),
@@ -109,7 +112,8 @@ class _ContactPageState extends ConsumerState<ContactPage> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      print(contact.id);
+                                      _createChat(
+                                          notifier: notifier, contact: contact);
                                     },
                                     child: Container(
                                       padding: EdgeInsets.all(8),
@@ -119,14 +123,14 @@ class _ContactPageState extends ConsumerState<ContactPage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            contact.name ?? "",
+                                            contact?.name ?? "",
                                             style: textTheme.bodyMedium
                                                 ?.copyWith(
                                                     color:
                                                         colorScheme.onSurface),
                                           ),
                                           Text(
-                                            contact.email ?? "",
+                                            contact?.email ?? "",
                                             style: metaTheme.metaData1.copyWith(
                                               color:
                                                   colorScheme.onSurfaceVariant,
@@ -167,40 +171,36 @@ class _ContactPageState extends ConsumerState<ContactPage> {
           );
   }
 
-  Widget _buildSearchBar(TextTheme textTheme, ColorScheme colorScheme) {
-    return Padding(
-      padding: const EdgeInsets.all(18.0),
-      child: TextField(
-        controller: _search,
-        focusNode: _focusNode,
-        style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
-        decoration: InputDecoration(
-          label: Row(
-            children: const [
-              Icon(Icons.search),
-              SizedBox(width: 4),
-              Text("Search"),
-            ],
+  void _createChat(
+      {required ContactNotifier notifier, required Data? contact}) async {
+    showDialog(
+        context: context,
+        useRootNavigator: false,
+        builder: (_) {
+          return Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
+        });
+    try {
+      CreateChat chatModel = await notifier.createChat(
+        userId: contact?.id ?? "",
+      );
+      if (mounted) {
+        context.push("/chat-details", extra: chatModel);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
           ),
-          floatingLabelBehavior: FloatingLabelBehavior.never,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-          fillColor: colorScheme.surfaceContainerHighest,
-          filled: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        onChanged: (value) {
-          if (value.trim().isEmpty) {
-            ref.read(_provider.notifier).searchContacts();
-          } else {
-            ref.read(_provider.notifier).searchContacts(search: value);
-          }
-        },
-      ),
-    );
+        );
+      }
+    } finally {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
   }
 
   void _onSearchChanged(String value) {

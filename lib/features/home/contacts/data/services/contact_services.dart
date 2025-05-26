@@ -21,7 +21,7 @@ class ContactServices {
     final response = await _dio.post(
       UrlConst.create_chat,
       data: {
-        "users": [users]
+        "users": [receiverId]
       },
     );
     return CreateChat.fromJson(response.data);
