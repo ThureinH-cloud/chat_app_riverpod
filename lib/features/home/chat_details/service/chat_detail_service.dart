@@ -1,3 +1,4 @@
+import 'package:chat_application/features/home/chat_details/model/message_model.dart';
 import 'package:chat_application/features/home/chat_details/model/send_message_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
@@ -16,5 +17,11 @@ class ChatDetailService {
       },
     );
     return SendMessageModel.fromJson(response.data);
+  }
+
+  Future<MessageModel> getAllMessages({required String chatId}) async {
+    final response =
+        await _dio.get(UrlConst.messages, queryParameters: {"chat_id": chatId});
+    return MessageModel.fromJson(response.data);
   }
 }

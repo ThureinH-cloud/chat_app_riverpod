@@ -8,7 +8,6 @@ class ThemeConst {
     ThemeData light = ThemeData.light();
     return light.copyWith(
         appBarTheme: AppBarTheme(backgroundColor: Color(0xffFFFFFF)),
-        scaffoldBackgroundColor: Color(0xffFFFFFF),
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Colors.blue,
           selectionColor: Colors.lightBlue.shade100, // Highlighted background

@@ -6,4 +6,5 @@ class UrlConst {
   static const String search = "user/?search";
   static const String create_chat = "chat/create";
   static const String send = "message/send";
+  static const String messages = "message/get-all";
 }

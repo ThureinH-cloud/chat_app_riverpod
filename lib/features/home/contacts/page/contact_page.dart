@@ -97,60 +97,67 @@ class _ContactPageState extends ConsumerState<ContactPage> {
                       vertical: 12,
                     ),
                     child: AnimationLimiter(
-                      child: ListView.builder(
-                        itemCount: contactModel?.data?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          Data? contact = contactModel?.data?[index];
-                          return AnimationConfiguration.staggeredList(
-                            position: index,
-                            duration: const Duration(milliseconds: 375),
-                            child: FlipAnimation(
-                              delay: Duration(milliseconds: 500),
-                              child: Column(
-                                spacing: 2,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      _createChat(
-                                          notifier: notifier, contact: contact);
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(8),
-                                      width: double.infinity,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            contact?.name ?? "",
-                                            style: textTheme.bodyMedium
-                                                ?.copyWith(
-                                                    color:
-                                                        colorScheme.onSurface),
-                                          ),
-                                          Text(
-                                            contact?.email ?? "",
-                                            style: metaTheme.metaData1.copyWith(
-                                              color:
-                                                  colorScheme.onSurfaceVariant,
+                      child: RefreshIndicator.adaptive(
+                        onRefresh: () async {
+                          ref.read(_provider.notifier).searchContacts();
+                        },
+                        child: ListView.builder(
+                          itemCount: contactModel?.data?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            Data? contact = contactModel?.data?[index];
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 375),
+                              child: FadeInAnimation(
+                                delay: Duration(milliseconds: 200),
+                                child: Column(
+                                  spacing: 2,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        _createChat(
+                                            notifier: notifier,
+                                            contact: contact);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        width: double.infinity,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              contact?.name ?? "",
+                                              style: textTheme.bodyMedium
+                                                  ?.copyWith(
+                                                      color: colorScheme
+                                                          .onSurface),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            height: 2,
-                                          ),
-                                        ],
+                                            Text(
+                                              contact?.email ?? "",
+                                              style:
+                                                  metaTheme.metaData1.copyWith(
+                                                color: colorScheme
+                                                    .onSurfaceVariant,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 2,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Divider(
-                                    color: colorNeutral.neutralLine,
-                                  ),
-                                ],
+                                    Divider(
+                                      color: colorNeutral.neutralLine,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
