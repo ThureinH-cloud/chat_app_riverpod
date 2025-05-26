@@ -34,6 +34,10 @@ class _ChatDetailsPageState extends ConsumerState<ChatDetailsPage> {
       GoRouterState state = GoRouterState.of(context);
       CreateChat model = state.extra as CreateChat;
       _getChatUser(model);
+      String? id = model.data?.id;
+      if (id != null) {
+        ref.read(_provider.notifier).getAllMessages(id);
+      }
     });
   }
 
@@ -112,6 +116,10 @@ class _ChatDetailsPageState extends ConsumerState<ChatDetailsPage> {
                         // );
                       },
                     ),
+                  ),
+                if (isFailed == true)
+                  Center(
+                    child: Text("Failed To Load"),
                   )
               ],
             ),
@@ -143,8 +151,9 @@ class _ChatDetailsPageState extends ConsumerState<ChatDetailsPage> {
                         try {
                           if (_otherUser?.id != null) {
                             await ref.read(_provider.notifier).sendMessage(
-                                content: _messageController.text,
-                                chatId: _otherUser?.id ?? "");
+                                  content: _messageController.text,
+                                  chatId: _otherUser?.id ?? "",
+                                );
                             _messageController.clear();
                             ref
                                 .read(_provider.notifier)
@@ -180,7 +189,6 @@ class _ChatDetailsPageState extends ConsumerState<ChatDetailsPage> {
       setState(() {
         _otherUser = otherUser;
       });
-      ref.read(_provider.notifier).getAllMessages(_otherUser?.id ?? "");
     }
   }
 
