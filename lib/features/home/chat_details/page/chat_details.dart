@@ -1,6 +1,7 @@
 import 'package:chat_application/common/storage/app_storage.dart';
 import 'package:chat_application/common/theme/extension/color_brand.dart';
 import 'package:chat_application/common/theme/extension/color_neutral.dart';
+import 'package:chat_application/common/web_socket/chat_socket.dart';
 import 'package:chat_application/features/home/chat_details/model/message_model.dart';
 import 'package:chat_application/features/home/chat_details/notifier/chat_detail_state_model.dart';
 import 'package:chat_application/features/home/chat_details/notifier/chat_detail_state_notifier.dart';
@@ -22,6 +23,8 @@ class ChatDetailsPage extends ConsumerStatefulWidget {
 class _ChatDetailsPageState extends ConsumerState<ChatDetailsPage> {
   final AppStorage _appStorage = GetIt.I.get<AppStorage>();
   Users? _otherUser;
+  CreateChat? _createChatModel;
+
   final TextEditingController _messageController = TextEditingController();
   final ChatDetailProvider _provider = ChatDetailProvider(
     () => ChatDetailStateNotifier(),
@@ -30,13 +33,21 @@ class _ChatDetailsPageState extends ConsumerState<ChatDetailsPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    ChatSocket.connect();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       GoRouterState state = GoRouterState.of(context);
-      CreateChat model = state.extra as CreateChat;
-      _getChatUser(model);
-      String? id = model.data?.id;
+      _createChatModel = state.extra as CreateChat;
+      _getChatUser(_createChatModel);
+      String? id = _createChatModel?.data?.id;
       if (id != null) {
         ref.read(_provider.notifier).getAllMessages(id);
+        ChatSocket.emit(cmd: ChatSocket.joinRoom, data: id);
+        ChatSocket.listen(
+            cmd: ChatSocket.newMessage,
+            callback: (v) {
+              print("new Message is arrived");
+              ref.read(_provider.notifier).getAllMessages(id);
+            });
       }
     });
   }
@@ -150,14 +161,16 @@ class _ChatDetailsPageState extends ConsumerState<ChatDetailsPage> {
                     : () async {
                         try {
                           if (_otherUser?.id != null) {
-                            await ref.read(_provider.notifier).sendMessage(
-                                  content: _messageController.text,
-                                  chatId: _otherUser?.id ?? "",
-                                );
+                            final data =
+                                await ref.read(_provider.notifier).sendMessage(
+                                      content: _messageController.text,
+                                      chatId: _createChatModel?.data?.id ?? "",
+                                    );
+                            ChatSocket.emit(
+                              cmd: ChatSocket.sendMessage,
+                              data: data?.toJson(),
+                            );
                             _messageController.clear();
-                            ref
-                                .read(_provider.notifier)
-                                .getAllMessages(_otherUser?.id ?? "");
                           }
                         } catch (e) {
                           if (context.mounted) {
@@ -191,6 +204,4 @@ class _ChatDetailsPageState extends ConsumerState<ChatDetailsPage> {
       });
     }
   }
-
-  void _getAllMessagges(CreateChat? model) {}
 }

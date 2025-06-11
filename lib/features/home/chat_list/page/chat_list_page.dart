@@ -5,6 +5,10 @@ import 'package:chat_application/features/home/chat_list/notifier/chat_list_stat
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../contacts/data/model/create_chat.dart' hide Data, Users;
+import '../../contacts/notifier/contact_notifier.dart';
 
 class ChatListPage extends ConsumerStatefulWidget {
   const ChatListPage({super.key});
@@ -16,6 +20,9 @@ class ChatListPage extends ConsumerStatefulWidget {
 class _ChatListPageState extends ConsumerState<ChatListPage> {
   final ChatListNotifierProvider _provider = ChatListNotifierProvider(
     () => ChatListNotifier(),
+  );
+  final ContactProvider _contactProvider = ContactProvider(
+    () => ContactNotifier(),
   );
   final AppStorage _appStorage = GetIt.I.get<AppStorage>();
   @override
@@ -34,7 +41,6 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
     ChatListStateModel state = ref.watch(_provider);
     ChatListNotifier notifier = ref.read(_provider.notifier);
     List<Data>? chats = state.chatListModel?.data;
-
     return Column(
       children: [
         if (state.isLoading == true)
@@ -55,11 +61,23 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
                   child: Card(
                     color: Colors.white,
                     child: ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        _createChat(id: user.id);
+                      },
                       title: Text(
                         user.name ?? "",
+                        style: textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onSurface,
+                        ),
                       ),
-                      subtitle: Text(message?.content ?? ""),
+                      subtitle: Text(
+                        message?.content ?? "",
+                        style: textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                     ),
                   ),
                 );
@@ -68,5 +86,37 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
           )
       ],
     );
+  }
+
+  void _createChat({String? id}) async {
+    ContactNotifier notifier = ref.read(_contactProvider.notifier);
+    showDialog(
+        context: context,
+        useRootNavigator: false,
+        builder: (_) {
+          return Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
+        });
+    try {
+      CreateChat chatModel = await notifier.createChat(
+        userId: id ?? "",
+      );
+      if (mounted) {
+        context.push("/chat-details", extra: chatModel);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
   }
 }

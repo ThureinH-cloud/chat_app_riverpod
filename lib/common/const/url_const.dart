@@ -8,4 +8,5 @@ class UrlConst {
   static const String send = "message/send";
   static const String messages = "message/get-all";
   static const String chat_lists = "/chat/get-chat-list";
+  static const String socket = "http://44.207.161.4:8443/socket";
 }

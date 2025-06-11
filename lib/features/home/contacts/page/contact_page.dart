@@ -117,8 +117,8 @@ class _ContactPageState extends ConsumerState<ContactPage> {
                                     InkWell(
                                       onTap: () {
                                         _createChat(
-                                            notifier: notifier,
-                                            contact: contact);
+                                          id: contact?.id,
+                                        );
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(8),
@@ -178,8 +178,8 @@ class _ContactPageState extends ConsumerState<ContactPage> {
           );
   }
 
-  void _createChat(
-      {required ContactNotifier notifier, required Data? contact}) async {
+  void _createChat({String? id}) async {
+    ContactNotifier notifier = ref.read(_provider.notifier);
     showDialog(
         context: context,
         useRootNavigator: false,
@@ -190,7 +190,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
         });
     try {
       CreateChat chatModel = await notifier.createChat(
-        userId: contact?.id ?? "",
+        userId: id ?? "",
       );
       if (mounted) {
         context.push("/chat-details", extra: chatModel);

@@ -1,4 +1,5 @@
-import 'package:chat_application/features/home/chat_details/model/message_model.dart';
+import 'package:chat_application/features/home/chat_details/model/message_model.dart'
+    hide Data;
 import 'package:chat_application/features/home/chat_details/model/send_message_model.dart';
 import 'package:chat_application/features/home/chat_details/notifier/chat_detail_state_model.dart';
 import 'package:chat_application/features/home/chat_details/service/chat_detail_service.dart';
@@ -15,11 +16,12 @@ class ChatDetailStateNotifier extends Notifier<ChatDetailStateModel> {
     return ChatDetailStateModel();
   }
 
-  Future<void> sendMessage(
+  Future<Data?> sendMessage(
       {required String content, required String chatId}) async {
     try {
       SendMessageModel model =
           await _detailService.sendMessage(chatId: chatId, content: content);
+      return model.data;
     } catch (e) {
       return Future.error(e);
     }
